@@ -1,8 +1,10 @@
 import 'dotenv/config';
 import app from './src/app.js'
 import connectDb from './src/config/database.js';
+import envoke from './src/services/ai-sevvice.js';
 
 connectDb()
+envoke()
 
 
 

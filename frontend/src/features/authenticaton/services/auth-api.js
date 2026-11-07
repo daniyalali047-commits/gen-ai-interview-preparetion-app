@@ -55,12 +55,13 @@ export async function logout() {
 
 export async function getME() {
     try {
-        const resp = axios.get('https://glowing-waddle-6vgj4v75xjxr2444x-3000.app.github.dev/api/auth/get-me' , {
-            withCredentials:true
+        const resp = await axios.get('https://glowing-waddle-6vgj4v75xjxr2444x-3000.app.github.dev/api/auth/get-me', {
+            withCredentials: true
         })
 
         return resp.data
     } catch (error) {
-        conosle.log(error)
+        console.log(error)
+        return null
     }
 }

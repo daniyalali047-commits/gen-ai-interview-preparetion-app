@@ -1,11 +1,21 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router'
+import { UseAuth } from '../hooks/use.auth'
 
 const Register = () => {
+  const navigate = useNavigate()
+  const [username, setUsername] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+  const {loading , handleRegister} = UseAuth()
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
+await handleRegister({username, email ,password})
+    navigate('/')
   }
+  
 
   return (
     <main className="auth-page">
@@ -17,12 +27,24 @@ const Register = () => {
         <form className="auth-form" onSubmit={handleSubmit}>
           <div className="input-group">
             <label htmlFor="username">Username</label>
-            <input id="username" type="text" placeholder="john_doe" />
+            <input
+              id="username"
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="john_doe"
+            />
           </div>
 
           <div className="input-group">
             <label htmlFor="email">Email</label>
-            <input id="email" type="email" placeholder="you@example.com" />
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+            />
           </div>
 
           <div className="input-group password-group">
@@ -31,6 +53,8 @@ const Register = () => {
               <input
                 id="password"
                 type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="Create a strong password"
               />
               <button
