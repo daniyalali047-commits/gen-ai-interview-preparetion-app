@@ -82,7 +82,12 @@ const reportSchema = new mongoose.Schema({
   technicalQuestions: [technicalQuestionSchema],  // Fixed: Typo in field name
   behavioralQuestions: [behavioralQuestionSchema], // Fixed: Typo & pluralized
   skillGaps: [skillGapSchema],                    // Fixed: Capitalization consistency
-  preparationPlan: [preparationPlanSchema]        // Fixed: Mapped schema correctly
+  preparationPlan: [preparationPlanSchema], // Fixed: Mapped schema correctly
+
+  user:{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:"users"
+  }
 }, { timestamps: true });
 
 const interviewReportModel = mongoose.model("InterviewReport", reportSchema);

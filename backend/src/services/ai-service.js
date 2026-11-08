@@ -54,7 +54,8 @@ Self Description: ${selfdescription}`;
     },
   });
 
-  console.log("RAW:", response.text);
+  // console.log("RAW:", response.text);
+  return JSON.parse(response.text)
 
   const parsed = interviewReportSchema.safeParse(JSON.parse(response.text));
   if (!parsed.success) {

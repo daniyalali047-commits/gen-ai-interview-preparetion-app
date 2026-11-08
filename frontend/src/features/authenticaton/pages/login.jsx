@@ -60,14 +60,6 @@ const Login = () => {
             </div>
           </div>
 
-          <div className="auth-row">
-            <label className="remember-me">
-              <input type="checkbox" />
-              <span>Remember me</span>
-            </label>
-            <a href="#">Forgot password?</a>
-          </div>
-
           <button type="submit" className="primary-btn" disabled={loading}>
             {loading ? 'Logging in...' : 'Login'}
           </button>
