@@ -29,6 +29,53 @@
   width: min(1200px, 100%);
 }
 
+.generation-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  max-width: 32rem;
+  padding: 3rem 2rem;
+  border: 1px solid var(--panel-border);
+  border-radius: 18px;
+  background: var(--panel-bg);
+  box-shadow: var(--panel-shadow);
+  text-align: center;
+}
+
+.generation-loading h1 {
+  margin: 0;
+  color: var(--text-strong);
+  font-size: clamp(1.5rem, 3vw, 2rem);
+}
+
+.generation-loading p {
+  margin: 0;
+  color: var(--text-soft);
+  line-height: 1.6;
+}
+
+.generation-spinner {
+  width: 3rem;
+  height: 3rem;
+  border: 4px solid rgba(45, 91, 255, 0.18);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: generation-spin 0.8s linear infinite;
+}
+
+@keyframes generation-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .generation-spinner {
+    animation-duration: 2s;
+  }
+}
+
 .workspace-header {
   display: flex;
   justify-content: space-between;
@@ -282,6 +329,12 @@ input[type='file'] {
 
 .action-group {
   margin-top: auto;
+}
+
+.generation-error {
+  margin: 0 0 0.75rem;
+  color: #b91c1c;
+  font-size: 0.9rem;
 }
 
 button {

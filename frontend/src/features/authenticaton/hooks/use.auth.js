@@ -15,7 +15,10 @@ export const UseAuth = () => {
 
       if (data?.user) {
         setUser(data.user)
+        return data.user
       }
+
+      return null
     } finally {
       setLoading(false)
     }
@@ -28,8 +31,10 @@ export const UseAuth = () => {
       const data = await register({ username, email, password })
 
       if (data?.user) {
-        setUser(data.user)
+        return data.user
       }
+
+      return null
     } finally {
       setLoading(false)
     }

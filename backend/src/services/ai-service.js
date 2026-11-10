@@ -29,6 +29,7 @@ const interviewReportSchema = z.object({
       tasks: z.array(z.string()).describe("Actionable tasks for the day"),
     })
   ).describe("Day-by-day preparation plan"),
+  title: z.string().describe("Title of the job for which interview report is generated"),
 });
 
 // zod v4 has built-in conversion; zod-to-json-schema only works with zod v3

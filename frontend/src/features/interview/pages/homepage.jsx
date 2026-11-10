@@ -1,19 +1,68 @@
 import { useState, useRef } from 'react';
+import { useNavigate } from 'react-router';
 import '../style/home.scss';
+import { useInterviewhook } from '../hook/useinterview.js';
 
 const Homepage = () => {
-  const fileInputRef = useRef(null);
+  const { loading, generatereport } = useInterviewhook();
+  const navigate = useNavigate();
+  const [jobdescription, setjobdescription] = useState('');
+  const [selfdescription, setselfdescription] = useState('');
+  const [generationError, setGenerationError] = useState('');
+  const resumeinputref = useRef(null);
   const [selectedFile, setSelectedFile] = useState(null);
 
   const handleFileChange = (event) => {
     const file = event.target.files?.[0];
-    setSelectedFile(file ? file.name : null);
+    setSelectedFile(file ?? null);
   };
+
+  if (loading) {
+    return (
+      <main className='home'>
+        <section className='generation-loading' role='status' aria-live='polite'>
+          <span className='generation-spinner' aria-hidden='true' />
+          <h1>Doing the magic</h1>
+          <p>We’re reviewing your resume and preparing your interview report.</p>
+        </section>
+      </main>
+    );
+  }
 
   const clearSelectedFile = () => {
     setSelectedFile(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+
+    if (resumeinputref.current) {
+      resumeinputref.current.value = '';
+    }
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setGenerationError('');
+
+    if (!jobdescription.trim() || !selfdescription.trim() || !selectedFile) {
+      alert('Please add your job description, self description, and resume PDF before generating a report.');
+      return;
+    }
+
+    try {
+      const report = await generatereport({
+        jobdescription,
+        selfdescription,
+        resumeFile: selectedFile,
+      });
+      const reportId = report._id ?? report.id;
+
+      if (!reportId) {
+        throw new Error('The report was generated, but no report ID was returned.');
+      }
+
+      navigate(`/interview/${reportId}`);
+    } catch (error) {
+      setGenerationError(
+        error.response?.data?.message || error.message || 'Could not generate the report. Please try again.',
+      );
     }
   };
 
@@ -35,12 +84,14 @@ const Homepage = () => {
           </div>
         </header>
 
-        <div className='panel-grid'>
+        <form className='panel-grid' onSubmit={handleSubmit}>
           <section className='left panel'>
             <label htmlFor='jobDescription' className='panel-label'>Job Description</label>
             <textarea
               name='jobDescription'
               id='jobDescription'
+              value={jobdescription}
+              onChange={(event) => setjobdescription(event.target.value)}
               placeholder='Paste the job description here...'
             />
           </section>
@@ -58,7 +109,7 @@ const Homepage = () => {
                 <div className='file-pill'>
                   <span className='file-dot'>PDF</span>
                   <span className='selected-file-name'>
-                    {selectedFile || 'No file selected'}
+                    {selectedFile ? selectedFile.name : 'No file selected'}
                   </span>
 
                   {selectedFile && (
@@ -75,7 +126,7 @@ const Homepage = () => {
               </div>
 
               <input
-                ref={fileInputRef}
+                ref={resumeinputref}
                 type='file'
                 name='resume'
                 id='resume'
@@ -89,18 +140,21 @@ const Homepage = () => {
               <textarea
                 name='selfDescription'
                 id='selfDescription'
+                value={selfdescription}
+                onChange={(event) => setselfdescription(event.target.value)}
                 placeholder='Write about your experience, strengths, and background...'
               />
             </div>
 
             <div className='input-group action-group'>
-              <button type='submit' id='generateReport'>
+              {generationError && <p className='generation-error' role='alert'>{generationError}</p>}
+              <button type='submit' id='generateReport' disabled={loading}>
                 <span className='button-icon'>⚡</span>
-                Generate Report
+                {loading ? 'Generating...' : 'Generate Report'}
               </button>
             </div>
           </section>
-        </div>
+        </form>
       </div>
     </main>
   );

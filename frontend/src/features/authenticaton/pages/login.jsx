@@ -12,8 +12,17 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    await handleLogin({ email, password })
-    Navigate("/")
+    try {
+      const user = await handleLogin({ email, password })
+
+      if (user) {
+        Navigate("/")
+      } else {
+        window.alert('Invalid credentials. The email or password is incorrect.')
+      }
+    } catch (error) {
+      window.alert(error.response?.data?.message || 'Invalid credentials. The email or password is incorrect.')
+    }
   }
 
   if(loading){

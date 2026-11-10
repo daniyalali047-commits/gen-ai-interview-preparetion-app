@@ -12,8 +12,15 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-await handleRegister({username, email ,password})
-    navigate('/')
+    try {
+      const user = await handleRegister({ username, email, password })
+
+      if (user) {
+        navigate('/login')
+      }
+    } catch (error) {
+      window.alert(error.response?.data?.message || 'Unable to create your account. Please try again.')
+    }
   }
   
 
@@ -68,7 +75,9 @@ await handleRegister({username, email ,password})
             </div>
           </div>
 
-          <button type="submit" className="primary-btn">Register</button>
+          <button type="submit" className="primary-btn" disabled={loading}>
+            {loading ? 'Creating account...' : 'Register'}
+          </button>
         </form>
 
         <p className="switch-text">
