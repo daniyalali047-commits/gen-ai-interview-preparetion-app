@@ -16,7 +16,7 @@ const Login = () => {
       const user = await handleLogin({ email, password })
 
       if (user) {
-        Navigate("/")
+        Navigate("/home")
       } else {
         window.alert('Invalid credentials. The email or password is incorrect.')
       }

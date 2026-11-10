@@ -41,18 +41,19 @@ const getreportbyid = useCallback(async (interviewId)=>{
     }
 }, [setloading, setreport])
 
-const getreports = async ()=>{
-    setloading(true)
+const getreports = useCallback(async (userId)=>{
     try {
-         const resp = await getAllinterviewReportsByUserId()
-  setreports(resp.interviewReports)
-
+        const resp = await getAllinterviewReportsByUserId(userId)
+        setreports(Array.isArray(resp.interviewReports) ? resp.interviewReports : [])
     } catch (error) {
-        console.log(error)
-    }finally{
-        setloading(false)
+        if (error.response?.status === 404) {
+            setreports([])
+            return
+        }
+
+        console.error('Failed to fetch interview reports:', error)
+        throw error
     }
-   
-}
-return {loading , setloading , report , generatereport , getreportbyid , getreports}
+}, [setreports])
+return {loading , setloading , report , generatereport , getreportbyid , getreports, reports}
 }

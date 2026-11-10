@@ -18,7 +18,7 @@
 .home {
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   min-height: 100vh;
   width: 100%;
   padding: 2rem;
@@ -157,6 +157,61 @@
   display: flex;
   flex-direction: column;
   backdrop-filter: blur(8px);
+}
+
+.reports-section {
+  margin-top: 1.5rem;
+  padding: 1.25rem;
+  border: 1px solid var(--panel-border);
+  border-radius: 18px;
+  background: var(--panel-bg);
+  box-shadow: var(--panel-shadow);
+}
+
+.reports-section h2 {
+  margin: 0 0 1rem;
+  color: var(--text-strong);
+  font-size: 1.2rem;
+}
+
+.reports-list {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.report-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.75);
+  color: var(--text-strong);
+  text-align: left;
+  box-shadow: none;
+}
+
+.report-item:hover {
+  border-color: rgba(45, 91, 255, 0.4);
+  box-shadow: none;
+}
+
+.report-date,
+.reports-message {
+  color: var(--text-soft);
+  font-size: 0.9rem;
+}
+
+.reports-message {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.reports-error {
+  color: #b91c1c;
 }
 
 .left {

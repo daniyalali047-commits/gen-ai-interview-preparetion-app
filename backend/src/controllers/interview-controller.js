@@ -1,5 +1,5 @@
 import { PDFParse } from "pdf-parse";
-import generateinterviewReport from "../services/ai-service.js";
+import {generateinterviewReport , generateresumepdf} from "../services/ai-service.js";
 import interviewReportModel from "../models/interviewreport-model.js";
 
 export async function generateInterviewReportfromAI(req, resp) {
@@ -60,8 +60,33 @@ export async function getAllInterviewReportsByUserId(req, resp) {
   });
 }
 
+//controller to generate resume pdf based on user configuration
+
+export async function generateResumePdfController(req, resp) {
+  const { interviewReportId } = req.params;
+
+  const interviewreport = await interviewReportModel.findById(interviewReportId);
+  if (!interviewreport) {
+    return resp.status(404).json({
+      message: "Cannot find interview report"
+    });
+  }
+
+  const { resume, selfdescription, jobdescription } = interviewreport;
+
+  const pdfbuffer = await generateresumepdf({ resume, selfdescription, jobdescription });
+  // You may want to send the PDF buffer as a file response
+  resp.set({
+    "Content-Type":"application/pdf",
+    "Content-Disposition":`attachment; filename = resume_${interviewReportId}.pdf`
+
+  })
+  resp.send(pdfbuffer);
+}
+
 export default {
   generateInterviewReportfromAI,
   getInterviewReportById,
   getAllInterviewReportsByUserId,
+  generateResumePdfController
 };

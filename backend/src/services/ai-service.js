@@ -1,6 +1,8 @@
 import { GoogleGenAI } from "@google/genai";
 import { z } from "zod";
 import { zodToJsonSchema } from "zod-to-json-schema";
+import PDFDocument from "pdfkit";
+import { PassThrough } from "node:stream";
 
 const ai = new GoogleGenAI({
   apiKey: process.env.GOOGLE_GEMINI_API,
@@ -67,6 +69,72 @@ Self Description: ${selfdescription}`;
   return parsed.data;
 }
 
-export default generateinterviewReport;
+
+async function createResumePdf(resumeText) {
+  const document = new PDFDocument({ size: "A4" });
+  const output = new PassThrough();
+  const chunks = [];
+
+  document.pipe(output);
+  output.on("data", (chunk) => chunks.push(chunk));
+
+  const pdfReady = new Promise((resolve, reject) => {
+    output.on("end", resolve);
+    output.on("error", reject);
+    document.on("error", reject);
+  });
+
+  document
+    .font("Helvetica-Bold")
+    .fontSize(20)
+    .fillColor("#1f2937")
+    .text("Resume", { align: "center" });
+  document.moveDown(1.5);
+  document
+    .font("Helvetica")
+    .fontSize(10)
+    .fillColor("#111827")
+    .text(resumeText, { lineGap: 4 });
+  document.end();
+
+  await pdfReady;
+  return Buffer.concat(chunks);
+}
+
+async function generateresumepdf({ resume, selfdescription, jobdescription }) {
+  const resumeSchema = z.object({
+    resumeText: z.string().describe("A complete resume as plain text with clear section headings and bullet points"),
+  });
+  const resumeJsonSchema =
+    typeof z.toJSONSchema === "function"
+      ? z.toJSONSchema(resumeSchema)
+      : zodToJsonSchema(resumeSchema);
+
+  const prompt = `Create a polished, tailored resume for the candidate using the following information.
+Return JSON with one field, resumeText. The value must be plain text, not HTML or Markdown.
+Use clear section headings with bold and put each experience, skill, and achievement on its own line.
+Make the layout professional  and it should not be look like it is written by an AI
+ Resume:${resume}
+ Self Description:${selfdescription}
+ Job Description:${jobdescription}
+`;
+
+  const response = await ai.models.generateContent({
+    model: "gemini-3.5-flash-lite",
+    contents: prompt,
+    config: {
+      responseMimeType: "application/json",
+      responseJsonSchema: resumeJsonSchema,
+    },
+  });
+  const parsed = resumeSchema.safeParse(JSON.parse(response.text));
+  if (!parsed.success) {
+    console.error("Resume output did not match the expected schema:", parsed.error.issues);
+    throw new Error("The generated resume did not match the expected format.");
+  }
+
+  return createResumePdf(parsed.data.resumeText);
+}
+export { generateinterviewReport ,generateresumepdf};
 
 //in this zod just check the ouput is accoriding to schema or not if now so it will check that if parsed is not succed then will throw error

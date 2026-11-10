@@ -1,16 +1,34 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import '../style/home.scss';
 import { useInterviewhook } from '../hook/useinterview.js';
+import { AuthContext } from '../../authenticaton/auth.context.jsx';
 
 const Homepage = () => {
-  const { loading, generatereport } = useInterviewhook();
+  const { loading, generatereport, getreports, reports } = useInterviewhook();
+  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const [jobdescription, setjobdescription] = useState('');
   const [selfdescription, setselfdescription] = useState('');
+
   const [generationError, setGenerationError] = useState('');
+  const [reportsLoading, setReportsLoading] = useState(true);
+  const [reportsError, setReportsError] = useState('');
   const resumeinputref = useRef(null);
   const [selectedFile, setSelectedFile] = useState(null);
+
+  useEffect(() => {
+    if (!user?.id) {
+      return;
+    }
+
+    setReportsLoading(true);
+    getreports(user.id)
+      .catch((error) => {
+        setReportsError(error.response?.data?.message || error.message || 'Could not load your reports.');
+      })
+      .finally(() => setReportsLoading(false));
+  }, [getreports, user?.id]);
 
   const handleFileChange = (event) => {
     const file = event.target.files?.[0];
@@ -77,6 +95,8 @@ const Homepage = () => {
               <h1>Generate a tailored interview report</h1>
             </div>
           </div>
+
+        
 
           <div className='header-badges'>
             <span className='mini-badge'>AI review</span>
@@ -155,6 +175,38 @@ const Homepage = () => {
             </div>
           </section>
         </form>
+
+        <section className='reports-section' aria-labelledby='reports-heading'>
+          <h2 id='reports-heading'>Your generated reports</h2>
+          {reportsLoading ? (
+            <p className='reports-message'>Loading your reports...</p>
+          ) : reportsError ? (
+            <p className='reports-message reports-error' role='alert'>{reportsError}</p>
+          ) : reports.length === 0 ? (
+            <p className='reports-message'>Your generated reports will appear here.</p>
+          ) : (
+            <div className='reports-list'>
+              {reports.map((item) => {
+                const reportId = item._id ?? item.id;
+
+                return (
+                  <button
+                    className='report-item'
+                    key={reportId}
+                    type='button'
+                    onClick={() => navigate(`/interview/${reportId}`)}
+                    disabled={!reportId}
+                  >
+                    <span>{item.title || 'Interview report'}</span>
+                    <span className='report-date'>
+                      {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : ''}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </section>
       </div>
     </main>
   );
