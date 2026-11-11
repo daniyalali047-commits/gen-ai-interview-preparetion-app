@@ -1,4 +1,4 @@
-# GenAI Job Interview Preperation
+# GenAI Interview Preparation
 
 GenAI Interview Preparation is a full-stack interview-preparation app. Users can create an account, submit a resume PDF and job details, and receive an AI-generated interview report with a match score, interview questions, skill gaps, and a preparation plan. The app can also generate a tailored resume PDF from a saved report.
 
