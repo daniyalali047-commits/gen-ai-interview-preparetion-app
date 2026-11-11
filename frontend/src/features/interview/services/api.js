@@ -46,3 +46,7 @@ export const getAllinterviewReportsByUserId = async (userId) => {
   const resp = await api.get(`/api/interview/user/${userId}`);
   return resp.data;
 };
+
+export const generateresumepdf = async({interviewReportId})=>{
+  const resp = await api.post(`/api/interview/resume/pdf/${inter` }
+}
