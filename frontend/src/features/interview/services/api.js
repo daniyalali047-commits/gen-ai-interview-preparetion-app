@@ -47,6 +47,12 @@ export const getAllinterviewReportsByUserId = async (userId) => {
   return resp.data;
 };
 
-export const generateresumepdf = async({interviewReportId})=>{
-  const resp = await api.post(`/api/interview/resume/pdf/${inter` }
-}
+
+//Service to generate resume pdf by Ai
+export const generateresumepdf = async ({ interviewReportId }) => {
+  const resp = await api.post(`/api/interview/resume/pdf/${interviewReportId}`, null, {
+    responseType: 'blob',
+  });
+
+  return resp.data;
+};

@@ -1,4 +1,4 @@
-import {generateInterviewReport , getInterviewReportById , getAllinterviewReportsByUserId} from "../services/api.js"
+import {generateInterviewReport , getInterviewReportById , getAllinterviewReportsByUserId , generateresumepdf} from "../services/api.js"
 import { useCallback, useContext } from 'react'
 import { interviewcontext } from '../interview.context.jsx'
 
@@ -55,5 +55,40 @@ const getreports = useCallback(async (userId)=>{
         throw error
     }
 }, [setreports])
-return {loading , setloading , report , generatereport , getreportbyid , getreports, reports}
+
+const resumepdf = useCallback(async (interviewReportId)=>{
+    if (!interviewReportId) {
+        throw new Error('Interview report ID is required to generate the resume PDF.')
+    }
+
+    setloading(true)
+
+    try {
+        const pdfBlob = await generateresumepdf({ interviewReportId })
+
+        if (typeof Blob !== 'undefined' && !(pdfBlob instanceof Blob)) {
+            throw new Error('The PDF response was not returned as a valid file.')
+        }
+
+        if (typeof window !== 'undefined') {
+            const pdfUrl = window.URL.createObjectURL(pdfBlob)
+            const link = document.createElement('a')
+            link.href = pdfUrl
+            link.download = `resume_${interviewReportId}.pdf`
+            document.body.appendChild(link)
+            link.click()
+            link.remove()
+            window.URL.revokeObjectURL(pdfUrl)
+        }
+
+        return true
+    } catch (error) {
+        console.error('Failed to generate resume PDF:', error)
+        throw error
+    } finally {
+        setloading(false)
+    }
+}, [setloading])
+
+return {loading , setloading , report , generatereport , getreportbyid , getreports, reports, resumepdf}
 }
