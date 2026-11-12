@@ -79,12 +79,28 @@ const jsonSchema =
     : zodToJsonSchema(interviewReportSchema);
 
 async function generateinterviewReport({ resume, jobdescription, selfdescription }) {
-  const prompt = `Generate a detailed interview report for the candidate.
+  const prompt = `Create a personalized interview preparation report by analyzing the candidate's resume, self-description, and the target job description together.
+
+Use the resume and self-description as evidence of the candidate's actual skills, projects, experience, strengths, and gaps. Compare that evidence with the job description's responsibilities and required or preferred skills. Do not invent candidate experience or rely on generic questions that could apply to any job.
+
+Tailor every item:
+- Technical questions must test important technologies, responsibilities, and skill gaps in this specific job, calibrated to the candidate's demonstrated experience.
+- Behavioral questions must reflect this job's collaboration and ownership expectations and invite examples grounded in the candidate's stated background.
+- Skill gaps must identify meaningful differences between job requirements and evidence in the resume or self-description; do not label a skill missing merely because it is not mentioned.
+- Preparation-plan tasks must directly address the identified gaps and job priorities, use the candidate's strengths where useful, and build in a sensible learning sequence.
+
+Choose the number of technical questions, behavioral questions, skill gaps, and preparation days independently based on the amount and complexity of relevant information. There are no fixed counts: do not default to the same number for every report, and do not force counts such as 4 technical questions, 2 behavioral questions, or 4 days. Include enough distinct, useful items to cover the important evidence without adding filler. Number preparation days consecutively starting at 1.
+
 Return JSON with exactly these top-level fields: matchScore, technicalQuestions, behavioralQuestions, skillGaps, preparationPlan, title.
 
-Resume: ${resume}
-Job Description: ${jobdescription}
-Self Description: ${selfdescription}`;
+Resume:
+${resume}
+
+Job Description:
+${jobdescription}
+
+Self Description:
+${selfdescription}`;
 
   const response = await generateWithFallbackAndRetry(prompt, jsonSchema);
 
