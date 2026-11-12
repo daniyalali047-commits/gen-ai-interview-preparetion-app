@@ -11,7 +11,7 @@ app.use(express.json());
 app.use(morgan('dev'));
 app.use(cookieParser());
 app.use(cors({
-  origin: 'https://gen-ai-frontend-gilt.vercel.app',
+  origin: 'https://glowing-waddle-6vgj4v75xjxr2444x-5173.app.github.dev',
   credentials: true,
 }));
 

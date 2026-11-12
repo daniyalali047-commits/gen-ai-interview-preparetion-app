@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://gen-ai-backend-lilac.vercel.app',
+  baseURL: 'https://glowing-waddle-6vgj4v75xjxr2444x-5173.app.github.dev',
   withCredentials: true,
 });
 
