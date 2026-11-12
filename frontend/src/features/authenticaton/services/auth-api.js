@@ -6,7 +6,7 @@ import axios from 'axios'
 // })
 
 export async function register({ username, email, password }) {
-    const resp = await axios.post('https://glowing-waddle-6vgj4v75xjxr2444x-3000.app.github.dev/api/auth/register', {
+    const resp = await axios.post('https://gen-ai-backend-lilac.vercel.app/api/auth/register', {
         username, email, password
     }, {
         withCredentials: true
