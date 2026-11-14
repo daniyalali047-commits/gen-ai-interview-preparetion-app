@@ -17,8 +17,13 @@ export default async function registerusercontroller(req, resp) {
       return resp.status(400).json({ message: "All fields are required" });
     }
 
+    if (typeof email !== "string" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      return resp.status(400).json({ message: "Please enter a valid email address" });
+    }
+
+    const normalizedEmail = email.trim();
     const isUserAlreadyExist = await usermodel.findOne({
-      $or: [{ username: username }, { email: email }]
+      $or: [{ username: username }, { email: normalizedEmail }]
     });
 
     if (isUserAlreadyExist) {
@@ -32,7 +37,7 @@ export default async function registerusercontroller(req, resp) {
 
     const newUserCreate = await usermodel.create({
       username: username,
-      email: email,
+      email: normalizedEmail,
       password: hashpassword
     });
 
